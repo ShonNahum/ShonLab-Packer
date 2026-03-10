@@ -4,7 +4,7 @@ set -euo pipefail
 STORAGE="local-lvm"
 BRIDGE="vmbr0"
 TARGET="${1:-all}"
-SSH_KEY="$HOME/.ssh/id_rsa.pub"
+SSH_KEY="~/.ssh/id_rsa.pub"
 
 create_ubuntu_seed() {
   local SEED_ID=8999
