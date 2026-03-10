@@ -1,0 +1,4 @@
+*.pkrvars.hcl
+!*.pkrvars.hcl.example
+.packer_cache/
+packer_manifest.json
