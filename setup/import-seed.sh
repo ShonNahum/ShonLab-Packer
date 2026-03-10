@@ -4,6 +4,7 @@ set -euo pipefail
 STORAGE="local-lvm"
 BRIDGE="vmbr0"
 TARGET="${1:-all}"
+SSH_KEY="$HOME/.ssh/id_rsa.pub"
 
 create_ubuntu_seed() {
   local SEED_ID=8999
@@ -21,7 +22,7 @@ create_ubuntu_seed() {
     --agent enabled=1 \
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
-    --ciuser ubuntu --cipassword ubuntu \
+    --ciuser ubuntu --sshkey "$(cat $SSH_KEY)" \
     --ipconfig0 ip=dhcp
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE

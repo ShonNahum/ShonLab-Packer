@@ -6,7 +6,10 @@ packer {
     }
   }
 }
-
+variable "ssh_private_key_path" {
+  type    = string
+  default = "~/.ssh/id_rsa"
+}
 variable "proxmox_url" {
   type = string
 }
@@ -65,14 +68,9 @@ variable "disk_size" {
 
 variable "ssh_username" {
   type    = string
-  default = "shon"
+  default = "ubuntu"
 }
 
-variable "ssh_password" {
-  type      = string
-  sensitive = true
-  default   = "packer"
-}
 
 variable "ssh_timeout" {
   type    = string
@@ -113,6 +111,8 @@ source "proxmox-clone" "base" {
   cloud_init_storage_pool = var.storage
 
   ssh_username = var.ssh_username
-  ssh_password = var.ssh_password
+  ssh_private_key_file = var.ssh_private_key_path
   ssh_timeout  = var.ssh_timeout
+  ssh_handshake_attempts    = 30
+  ssh_agent_auth            = false
 }
