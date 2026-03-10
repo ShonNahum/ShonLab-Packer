@@ -1,0 +1,9 @@
+proxmox_url      = "https://192.168.1.10:8006/api2/json"
+proxmox_username = "root@pam"
+proxmox_password = "your-root-password"
+proxmox_node     = "pve"
+seed_vm_id       = 8999
+template_id      = 9000
+template_name    = "ubuntu-22.04-cloud"
+storage          = "local-lvm"
+bridge           = "vmbr0"
