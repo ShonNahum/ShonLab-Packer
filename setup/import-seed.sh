@@ -47,7 +47,7 @@ create_debian_seed() {
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
     --ciuser admin --cipassword packer \
-    --ipconfig0 ip=dhcp
+    --ipconfig0 ip=dhcp 
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
   qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
