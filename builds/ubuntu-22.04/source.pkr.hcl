@@ -8,7 +8,7 @@ packer {
 }
 variable "ssh_private_key_path" {
   type    = string
-  default = "~/.ssh/id_rsa"
+  default = "/home/shon/.ssh/id_rsa"
 }
 variable "proxmox_url" {
   type = string
@@ -113,6 +113,9 @@ source "proxmox-clone" "base" {
   ssh_username = var.ssh_username
   ssh_private_key_file = var.ssh_private_key_path
   ssh_timeout  = var.ssh_timeout
-  ssh_handshake_attempts    = 30
-  ssh_agent_auth            = false
+  communicator = "ssh"
+  boot_wait = "2m"
+  ssh_handshake_attempts = 50
+  ssh_read_write_timeout = "10s"
+  ssh_pty = true
 }

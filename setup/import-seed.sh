@@ -62,3 +62,4 @@ case "$TARGET" in
   all)    create_ubuntu_seed; create_debian_seed ;;
   *)      echo "Usage: $0 [ubuntu|debian|all]"; exit 1 ;;
 esac
+#BEFORE MAKE IT TO A TEMPLATE, MAKE SURE TO INSTALL qemu-guest-agent ON IT AND ENABLE & IPCONFIG0=DHCP IF NOT WORKING IN CLOUD-INIT UI
