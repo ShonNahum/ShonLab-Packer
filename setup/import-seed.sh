@@ -22,7 +22,7 @@ create_ubuntu_seed() {
     --agent enabled=1 \
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
-    --ciuser ubuntu --sshkeys $SSH_KEY \
+    --ciuser ubuntu --sshkeys "$SSH_KEY" \
     --ipconfig0 ip=dhcp
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
