@@ -21,7 +21,8 @@ create_ubuntu_seed() {
     --agent enabled=1 \
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
-    --ciuser ubuntu --cipassword ubuntu
+    --ciuser ubuntu --cipassword ubuntu \
+    --ipconfig0 ip=dhcp
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
   qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
@@ -45,7 +46,8 @@ create_debian_seed() {
     --agent enabled=1 \
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
-    --ciuser admin --cipassword packer
+    --ciuser admin --cipassword packer \
+    --ipconfig0 ip=dhcp
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
   qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
@@ -60,41 +62,3 @@ case "$TARGET" in
   *)      echo "Usage: $0 [ubuntu|debian|all]"; exit 1 ;;
 esac
 ```
-
----
-
-**`.gitignore`**
-```
-*.pkrvars.hcl
-!*.pkrvars.hcl.example
-.packer_cache/
-packer_manifest.json
-```
-
----
-
-The tree to recreate:
-```
-packer-proxmox/
-├── .gitignore
-├── modules/
-│   └── proxmox-base/
-│       └── source.pkr.hcl
-├── scripts/
-│   ├── install-common.sh
-│   └── base-cleanup.sh
-├── builds/
-│   ├── ubuntu-22.04/
-│   │   ├── build.pkr.hcl
-│   │   ├── variables.pkr.hcl
-│   │   ├── ubuntu.pkrvars.hcl.example
-│   │   └── scripts/
-│   │       └── install-ubuntu.sh
-│   └── debian-12/
-│       ├── build.pkr.hcl
-│       ├── variables.pkr.hcl
-│       ├── debian.pkrvars.hcl.example
-│       └── scripts/
-│           └── install-debian.sh
-└── setup/
-    └── import-seed.sh
