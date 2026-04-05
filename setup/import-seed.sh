@@ -10,6 +10,12 @@ create_ubuntu_seed() {
   local SEED_ID=8999
   local IMAGE_FILE="/tmp/ubuntu-22.04-seed.img"
 
+  # Destroy previous attempt if it exists
+  if qm status $SEED_ID &>/dev/null; then
+    echo "==> Destroying existing VM $SEED_ID..."
+    qm destroy $SEED_ID --purge
+  fi
+
   echo "==> Creating Ubuntu 22.04 seed VM..."
   wget -q --show-progress -O "$IMAGE_FILE" \
     "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
@@ -35,6 +41,12 @@ create_centos_seed() {
   local SEED_ID=8998
   local IMAGE_FILE="/tmp/centos-9-seed.qcow2"
 
+  # Destroy previous attempt if it exists
+  if qm status $SEED_ID &>/dev/null; then
+    echo "==> Destroying existing VM $SEED_ID..."
+    qm destroy $SEED_ID --purge
+  fi
+
   echo "==> Creating CentOS Stream 9 seed VM..."
   wget -q --show-progress -O "$IMAGE_FILE" \
     "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2"
@@ -53,10 +65,9 @@ create_centos_seed() {
     --ciuser cloud-user --sshkeys "$SSH_KEY" \
     --ipconfig0 ip=dhcp
 
-  # Capture the unused disk name dynamically (avoids disk-0 vs disk-1 index guessing)
-  local DISK_REF
-  DISK_REF=$(qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE 2>&1 | grep -oP "unused\d+" | tail -1)
-  qm set $SEED_ID --scsi0 $STORAGE:$DISK_REF,discard=on,iothread=1
+  # Fresh VM has no disks → imported disk is always vm-SEED_ID-disk-0
+  qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
+  qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
   qm set $SEED_ID --boot order=scsi0
   echo "✅ CentOS seed ready."
 }
