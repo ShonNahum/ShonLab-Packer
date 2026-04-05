@@ -1,13 +1,13 @@
 build {
-  name    = "debian-12"
+  name    = "centos-9"
   sources = ["source.proxmox-clone.base"]
 
   provisioner "shell" {
-    script = "../../scripts/install-common.sh"
+    script = "../../scripts/install-common-rpm.sh"
   }
 
   provisioner "shell" {
-    script = "scripts/install-debian.sh"
+    script = "scripts/install-centos.sh"
   }
 
   provisioner "shell" {

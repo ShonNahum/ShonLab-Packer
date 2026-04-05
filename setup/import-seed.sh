@@ -31,15 +31,15 @@ create_ubuntu_seed() {
   echo "✅ Ubuntu seed ready."
 }
 
-create_debian_seed() {
+create_centos_seed() {
   local SEED_ID=8998
-  local IMAGE_FILE="/tmp/debian-12-seed.qcow2"
+  local IMAGE_FILE="/tmp/centos-9-seed.qcow2"
 
-  echo "==> Creating Debian 12 seed VM..."
+  echo "==> Creating CentOS Stream 9 seed VM..."
   wget -q --show-progress -O "$IMAGE_FILE" \
-    "https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2"
+    "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2"
 
-  qm create $SEED_ID --name "debian-12-seed" \
+  qm create $SEED_ID --name "centos-9-seed" \
     --memory 2048 --cores 2 \
     --net0 virtio,bridge=$BRIDGE \
     --ostype l26 --machine q35 \
@@ -47,19 +47,19 @@ create_debian_seed() {
     --agent enabled=1 \
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
-    --ciuser admin --sshkeys $SSH_KEY \
+    --ciuser cloud-user --sshkeys "$SSH_KEY" \
     --ipconfig0 ip=dhcp
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
   qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
   qm set $SEED_ID --boot c --bootdisk scsi0
-  echo "✅ Debian seed ready."
+  echo "✅ CentOS seed ready."
 }
 
 case "$TARGET" in
   ubuntu) create_ubuntu_seed ;;
-  debian) create_debian_seed ;;
-  all)    create_ubuntu_seed; create_debian_seed ;;
-  *)      echo "Usage: $0 [ubuntu|debian|all]"; exit 1 ;;
+  centos) create_centos_seed ;;
+  all)    create_ubuntu_seed; create_centos_seed ;;
+  *)      echo "Usage: $0 [ubuntu|centos|all]"; exit 1 ;;
 esac
 #BEFORE MAKE IT TO A TEMPLATE, MAKE SURE TO INSTALL qemu-guest-agent ON IT AND ENABLE & IPCONFIG0=DHCP IF NOT WORKING IN CLOUD-INIT UI
