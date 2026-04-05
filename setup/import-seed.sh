@@ -39,19 +39,24 @@ create_centos_seed() {
   wget -q --show-progress -O "$IMAGE_FILE" \
     "https://cloud.centos.org/centos/9-stream/x86_64/images/CentOS-Stream-GenericCloud-9-latest.x86_64.qcow2"
 
+  # --cpu host  → CentOS 9 needs real CPU flags (x86-64-v2+), default KVM CPU is too minimal
+  # --scsihw virtio-scsi-pci → CentOS GenericCloud ships this driver; virtio-scsi-single causes kernel panic
   qm create $SEED_ID --name "centos-9-seed" \
     --memory 2048 --cores 2 \
+    --cpu host \
     --net0 virtio,bridge=$BRIDGE \
     --ostype l26 --machine q35 \
-    --scsihw virtio-scsi-single \
+    --scsihw virtio-scsi-pci \
     --agent enabled=1 \
     --ide2 $STORAGE:cloudinit \
     --serial0 socket --vga serial0 \
     --ciuser cloud-user --sshkeys "$SSH_KEY" \
     --ipconfig0 ip=dhcp
 
-  qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
-  qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
+  # Capture the unused disk name dynamically (avoids disk-0 vs disk-1 index guessing)
+  local DISK_REF
+  DISK_REF=$(qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE 2>&1 | grep -oP "unused\d+" | tail -1)
+  qm set $SEED_ID --scsi0 $STORAGE:$DISK_REF,discard=on,iothread=1
   qm set $SEED_ID --boot order=scsi0
   echo "✅ CentOS seed ready."
 }

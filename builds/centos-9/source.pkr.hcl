@@ -95,7 +95,7 @@ source "proxmox-clone" "base" {
   memory = var.memory
   os     = "l26"
 
-  scsi_controller = "virtio-scsi-single"
+  scsi_controller = "virtio-scsi-pci"
 
   disks {
     disk_size    = var.disk_size
