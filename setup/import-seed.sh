@@ -67,7 +67,7 @@ create_centos_seed() {
 
   # Fresh VM has no disks → imported disk is always vm-SEED_ID-disk-0
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
-  qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
+  qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on
   qm set $SEED_ID --boot order=scsi0
   echo "✅ CentOS seed ready."
 }
