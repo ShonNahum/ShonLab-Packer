@@ -51,9 +51,8 @@ create_centos_seed() {
     --ipconfig0 ip=dhcp
 
   qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE
-  DISK=$(qm importdisk $SEED_ID "$IMAGE_FILE" $STORAGE | awk '{print $NF}')
-  qm set $SEED_ID --scsi0 $DISK,discard=on,iothread=1  qm set $SEED_ID --boot c --bootdisk scsi0
-  qm set $SEED_ID --bios ovmf
+  qm set $SEED_ID --scsi0 $STORAGE:vm-${SEED_ID}-disk-0,discard=on,iothread=1
+  qm set $SEED_ID --boot c --bootdisk scsi0
   echo "✅ CentOS seed ready."
 }
 
